@@ -629,55 +629,39 @@ check_cn() {
     fi
   fi
 
-  # 获取当前IP地址，设置超时为3秒
-  current_ip=$(curl -s --max-time 3 ip.sb)
+  local suffixes=(
+    "https://gh.con.sh/"
+    "https://gh-proxy.com/"
+    "https://ghp.ci/"
+    "https://gh.m-l.cc/"
+    "https://down.npee.cn/?"
+    "https://mirror.ghproxy.com/"
+    "https://ghps.cc/"
+    "https://gh.api.99988866.xyz/"
+    "https://git.886.be/"
+    "https://hub.gitmirror.com/"
+    "https://pd.zwc365.com/"
+    "https://gh.ddlc.top/"
+    "https://slink.ltd/"
+    "https://github.moeyy.xyz/"
+    "https://ghproxy.crazypeace.workers.dev/"
+    "https://gh.h233.eu.org/"
+  )
 
-  # 使用ip-api.com查询IP所在国家，设置超时为3秒
-  response=$(curl -s --max-time 3 "http://ip-api.com/json/$current_ip")
+  # 循环遍历每个后缀并测试组合的链接
+  for suffix in "${suffixes[@]}"; do
+    # 组合后缀和原始链接
+    combined_url="$suffix$1"
 
-  # 检查国家是否为中国
-  country=$(echo "$response" | jq -r '.countryCode')
-  if [[ "$country" == "CN" ]]; then
-    local suffixes=(
-      "https://gh.con.sh/"
-      "https://gh-proxy.com/"
-      "https://ghp.ci/"
-      "https://gh.m-l.cc/"
-      "https://down.npee.cn/?"
-      "https://mirror.ghproxy.com/"
-      "https://ghps.cc/"
-      "https://gh.api.99988866.xyz/"
-      "https://git.886.be/"
-      "https://hub.gitmirror.com/"
-      "https://pd.zwc365.com/"
-      "https://gh.ddlc.top/"
-      "https://slink.ltd/"
-      "https://github.moeyy.xyz/"
-      "https://ghproxy.crazypeace.workers.dev/"
-      "https://gh.h233.eu.org/"
-    )
+    # 使用 curl -I 获取头部信息，提取状态码
+    local response_code=$(curl --max-time 2 -sL -w "%{http_code}" -I "$combined_url" | head -n 1 | awk '{print $2}')
 
-    # 循环遍历每个后缀并测试组合的链接
-    for suffix in "${suffixes[@]}"; do
-      # 组合后缀和原始链接
-      combined_url="$suffix$1"
-
-      # 使用 curl -I 获取头部信息，提取状态码
-      local response_code=$(curl --max-time 2 -sL -w "%{http_code}" -I "$combined_url" | head -n 1 | awk '{print $2}')
-
-      # 检查响应码是否表示成功 (2xx)
-      if [[ $response_code -ge 200 && $response_code -lt 300 ]]; then
-        echo "$combined_url"
-        return 0 # 返回可用链接，结束函数
-      fi
-    done
-
-  # 如果没有找到有效链接，返回原始链接
-  else
-    echo "$1"
-    return 1
-
-  fi
+    # 检查响应码是否表示成功 (2xx)
+    if [[ $response_code -ge 200 && $response_code -lt 300 ]]; then
+      echo "$combined_url"
+      return 0 # 返回可用链接，结束函数
+    fi
+  done
 }
 
 #下载
