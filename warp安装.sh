@@ -1,0 +1,1 @@
+bash <(curl -sL gitlab.com/fscarmen/warp_unlock/-/raw/main/unlock.sh)

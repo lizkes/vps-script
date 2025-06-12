@@ -1,0 +1,1 @@
+bash <(curl -sL raw.githubusercontent.com/spiritLHLS/addswap/main/addswap.sh)

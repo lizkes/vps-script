@@ -1,0 +1,1 @@
+bash <(curl -sL bash.spiritlhl.net/ecs)

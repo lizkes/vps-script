@@ -1,0 +1,1 @@
+bash <(curl -sL run.NodeQuality.com)
