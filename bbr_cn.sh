@@ -557,31 +557,6 @@ while [ $# -gt 0 ]; do
   shift # 移动到下一个参数
 done
 
-# 检查github网络
-check_github() {
-  # 检测域名的可访问性函数
-  check_domain() {
-    local domain="$1"
-    if ! curl --max-time 5 --head --silent --fail "$domain" >/dev/null; then
-      echo -e "${Error}无法访问 $domain，请检查网络或者本地DNS 或者访问频率过快而受限"
-      github_network=0
-    fi
-  }
-
-  # 检测所有域名的可访问性
-  check_domain "https://raw.githubusercontent.com"
-  check_domain "https://api.github.com"
-  check_domain "https://github.com"
-
-  if [ "$github_network" -eq 0 ]; then
-    echo -e "${Error}github网络访问受限，将影响内核的安装以及脚本的检查更新，1秒后继续运行脚本"
-    sleep 1
-  else
-    # 所有域名均可访问，打印成功提示
-    echo -e "${Green_font_prefix}github可访问${Font_color_suffix}，继续执行脚本..."
-  fi
-}
-
 #检查连接
 checkurl() {
   local url="$1"
